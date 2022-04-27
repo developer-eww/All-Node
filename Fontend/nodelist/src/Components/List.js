@@ -6,6 +6,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Chip from '@mui/material/Chip';
+import { useNavigate,useParams } from "react-router-dom";
+
 import axios from 'axios'
 import { Avatar } from '@mui/material';
 
@@ -41,20 +44,24 @@ function stringAvatar(name) {
 
 
 function List() {
-
+  let navigate = useNavigate();
   const [Data, setData] = React.useState([])
 
+
+  const handleDelete=()=>{console.log("first")}
+ 
+  
   React.useEffect(() => {
+   
     axios.get('http://localhost:3000/employee')
     .then(response => {console.log(response.data.users)
     setData(response.data.users)}
     )
-
     .catch(error => {
         console.error('There was an error!', error);
        
     });
-  console.log("first")
+
   }, [])
   return (
     <TableContainer component={Paper}>
@@ -72,20 +79,29 @@ function List() {
           {Data.length>0&&Data.map((row,index) => 
          
              (
+             
                 <TableRow
               key={row._id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
+            
+
               <TableCell component="th" scope="row">
               <Avatar{...stringAvatar(`${row.name} N`)} />
               </TableCell>
               <TableCell align="right">{row.name}</TableCell>
               <TableCell align="right">{row.email}</TableCell>
               <TableCell align="right">{row.mobile}</TableCell>
-              <TableCell align="right">{row.city}</TableCell>
+              <TableCell align="right">
+              <Chip
+                label={row.city}
+           onClick={()=>navigate(`/update/${row._id}`)}
+             onDelete={handleDelete}
+                  />
+              </TableCell>
             </TableRow>
+           
             )
-
           
           )}
         </TableBody>

@@ -1,6 +1,5 @@
-
 import * as React from "react";
-import { v4 } from "uuid";
+import {useNavigate,useParams} from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import TextareaAutosize from "@mui/base/TextareaAutosize";
@@ -13,56 +12,62 @@ import FormLabel from "@mui/material/FormLabel";
 import Checkbox from '@mui/material/Checkbox';
 import Slider from '@mui/material/Slider';
 import Button from '@mui/material/Button';
-import axios from 'axios'
+import axios from "axios";
 
-function AddEmp() {
+function UpdateEmp() {
+  let { id } = useParams();
+  let navigate = useNavigate();
 
-  const [value, setValue] = React.useState("");
-  const [checked, setChecked] = React.useState([false, false]);
-  const [alldata,setalldata]=React.useState({
-        Name:"",
-        MobileNum:"",
-        Email:"",
-        Address:"",
-        State:"",
-        City:"",
-        date:"",
-        Password:"",
-        Gender:"",
-  });
-
-const [slider, setslider] =React.useState(3)
+  const [EmpData, setEmpData] = React.useState([]);
 
 
-  React.useEffect(()=>{
-  
-  },[alldata])
+    const [value, setValue] = React.useState();
+    const [checked, setChecked] = React.useState([false,false]);
+    const [slider, setslider] =React.useState(2)
+   
+   
+    const [alldata,setalldata]=React.useState({
+      Name:EmpData.name,
+      MobileNum:EmpData.mobile,
+      Email:EmpData.email,
+      Address:EmpData.address,
+      State:EmpData.state,
+      City:EmpData.city,
+      date:EmpData.date,
+      Password:EmpData.password,
+      Gender:EmpData.gender,
+});
+   
+console.log(alldata)
+console.log(EmpData.name)
 
-  
-const AddHandler=()=>{
-  // const EmpData=JSON.parse(localStorage.getItem("EMP-DATA"))||[];
-  
-  let employee1 = {
-  "name": alldata.Name,
-  "email": alldata.Email,
-  "mobile": alldata.MobileNum,
-  "address": alldata.Address,
-  "state": alldata.State,
-  "city": alldata.City,
-  "gender": alldata.Gender,
-  "password": alldata.Password,
-  "hobbies": "cricket",
-  "rate": slider
-}
-  axios.post('http://localhost:3000/employee/add',employee1 )
-  .then((res) => console.log('Created'+res))
-  .catch(err => {
-    console.error(err);
-  });
+React.useEffect(()=>{
+  axios.get(`http://localhost:3000/employee/${id}`)
+    .then(response => {
+      setEmpData(response.data.users);
+  }
+    )
+    .catch(error => {
+        console.error('There was an error!', error);
+       
+    });
+    
+},[])
+ 
 
-console.log(employee1)
 
-  alert("One Record added")
+
+
+
+
+const UpdateHandler=()=>{
+ 
+
+
+
+  console.log(JSON.stringify(EmpData))
+  localStorage.setItem("EMP-DATA",JSON.stringify(EmpData));
+  alert("One Record updated")
   setalldata({
   Name:"",
   MobileNum:"",
@@ -77,73 +82,58 @@ console.log(employee1)
 
 setChecked([false,false]);
 setValue("");
-}
+  navigate("/list")
+};
 
 
 
-  const handleChange1 = (event) => {
-    setChecked([event.target.checked, event.target.checked]);
-  };
-
-  const handleChange2 = (event) => {
-    setChecked([event.target.checked, checked[1]]);
-  };
-
-  const handleChange3 = (event) => {
-    setChecked([checked[0], event.target.checked]);
-  };
-  function valuetext(value) {
-    return `${value}°C`;
-  }
-  const children = (
-    <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-      <FormControlLabel
-        label="Learning a new language."
-        control={<Checkbox checked={checked[0]} onChange={handleChange2} />}
-      />
-      <FormControlLabel
-        label="Blogging"
-        control={<Checkbox checked={checked[1]} onChange={handleChange3} />}
-      />
-    </Box>
-  );
-
-
-  const handleChange = (event) => {
-    setValue(event.target.value);
-    setalldata(
-      {
-        MobileNum:alldata.MobileNum,
-      Name:alldata.Name,
-      Email:alldata.Email,
-      Address:alldata.Address,
-      State:alldata.State,
-      City:alldata.City,
-      date:alldata.date,
-      Password:alldata.Password,
-      Gender:event.target.value,
-      C_skill:alldata.C_skill,
-      Hobbeis:alldata.Hobbeis
-    
-    })
-  };
-
-  const State = ["Maharashtra", "Bihar", "Goa"];
-  const City = ["North Goa", "Patna", "Pune"];
+    const handleChange1 = (event) => {
+      setChecked([event.target.checked, event.target.checked]);
+    };
   
-  const flatProps1 = {
-    options: City.map((option) => option),
-  };
-  const flatProps = {
-    options: State.map((option) => option),
-  };
-
-
+    const handleChange2 = (event) => {
+      setChecked([event.target.checked, checked[1]]);
+    };
+  
+    const handleChange3 = (event) => {
+      setChecked([checked[0], event.target.checked]);
+    };
+    function valuetext(value) {
+      return `${value}°C`;
+    }
+    const children = (
+      <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
+        <FormControlLabel
+          label="Learning a new language."
+          control={<Checkbox checked={checked[0]} onChange={handleChange2} />}
+        />
+        <FormControlLabel
+          label="Blogging"
+          control={<Checkbox checked={checked[1]} onChange={handleChange3} />}
+        />
+      </Box>
+    );
+  
+  
+    const handleChange = (event) => {
+      setValue(event.target.value);
+    };
+  
+    const State = ["Maharashtra", "Bihar", "Goa"];
+    const City = ["North Goa", "Patna", "Pune"];
+    
+    const flatProps1 = {
+      options: City.map((option) => option),
+    };
+    const flatProps = {
+      options: State.map((option) => option),
+    };
   return (
     <>
+
     <div>
       <h2>
-            Employees Details
+          Update Employees Details
           </h2>
         </div>
     <div className="main-div">
@@ -159,10 +149,9 @@ setValue("");
         <div>
           <TextField
             required
-            id="standard-required"
+            id="standard-required1"
             label="Name"
             type="text"
-            variant="standard"
             value={alldata.Name}
             onChange={(e)=>setalldata({Name:e.target.value,
               MobileNum:alldata.MobileNum,
@@ -178,10 +167,9 @@ setValue("");
           />
           <TextField
             required
-            id="standard-required3"
+            id="standard-required2"
             label="Mobile Number"
             type="number"
-            variant="standard"
             value={alldata.MobileNum}
             onChange={(e)=>setalldata(
               {
@@ -200,10 +188,9 @@ setValue("");
           />
           <TextField
             required
-            id="standard-required1"
+            id="standard-required3"
             label="Email"
             type="email"
-            variant="standard"
             value={alldata.Email}
             onChange={(e)=>setalldata(
               {
@@ -250,7 +237,7 @@ setValue("");
             {...flatProps}
             onChange={(event, value) => setalldata(
               {
-                MobileNum:alldata.MobileNum,
+              MobileNum:alldata.MobileNum,
               Name:alldata.Name,
               Email:alldata.Email,
               Address:alldata.Address,
@@ -259,20 +246,16 @@ setValue("");
               date:alldata.date,
               Password:alldata.Password,
               Gender:alldata.Gender,
-             
-            
             })}
+            value={alldata.State}
             id="flat-demo"
-            renderInput={(params) => {
-            
-              return<TextField {...params} label="State" variant="standard" />
-            }}
-            
-          
+            renderInput={(params) => (
+              <TextField {...params} label="State" variant="standard" />
+            )}
           />
           <Autocomplete
             {...flatProps1}
-           onChange={(event, value) => setalldata(
+            onChange={(event, value) => setalldata(
               {
                 MobileNum:alldata.MobileNum,
               Name:alldata.Name,
@@ -284,14 +267,11 @@ setValue("");
               Password:alldata.Password,
               Gender:alldata.Gender
             })}
-            
-            
+           value={alldata.City}
             id="flat-demo1"
             renderInput={(params) => (
               <TextField {...params} label="City" variant="standard" />
-            )  
-          }
-  
+            )}
           />
         </div>
 
@@ -301,7 +281,6 @@ setValue("");
             id="standard-date-input"
             label="Date"
             type="date"
-            variant="standard"
             value={alldata.date}
             onChange={(e)=>setalldata(
               {
@@ -315,6 +294,7 @@ setValue("");
               Password:alldata.Password,
               Gender:alldata.Gender
             })}
+          
           />
 
           <TextField
@@ -323,7 +303,7 @@ setValue("");
             label="Password"
             type="password"
             autoComplete="current-password"
-            variant="standard"
+          
             style={{ margin: 20}}
             value={alldata.Password}
             onChange={(e)=>setalldata(
@@ -363,20 +343,19 @@ setValue("");
 
 
         <div className="display">
-        <Box sx={{ width: 200,marginRight:20}}>
-          <label>communication skills</label>
+        <Box sx={{ width: 200 }}>
       <Slider
-        aria-label="communication skills"
         onChange={(e,value)=>setslider(value)
         }
-        defaultValue={3}
+        aria-label="communication skills"
+        // defaultValue={slider}
+        value={slider}
         getAriaValueText={valuetext}
         valueLabelDisplay="auto"
         step={1}
         marks
         min={1}
         max={5}
-      
       />
      
     </Box>
@@ -395,11 +374,14 @@ setValue("");
     </div>
             </div>
       </Box>
-      <div className="margin" > <Button onClick={AddHandler} variant="contained">Add new </Button></div>
+
+      <div className="margin" > <Button onClick={UpdateHandler} variant="contained">Update</Button></div>
       </div>
      
     </>
-  );
+
+
+  )
 }
 
-export default AddEmp;
+export default UpdateEmp
