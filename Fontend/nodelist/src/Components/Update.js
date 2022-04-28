@@ -1,11 +1,16 @@
 import React, { useState } from 'react'
 import {Autocomplete, Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextareaAutosize, TextField} from '@mui/material';
-import DatePicker from "react-datepicker";  
+// import DatePicker from "react-datepicker";  
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
   
 import "react-datepicker/dist/react-datepicker.css";  
 
 function Update() {
-    const [startDate, setStartDate] = useState(new Date());  
+    // const [startDate, setStartDate] = useState(new Date());  
+    const [value, setValue] = React.useState(new Date());
     const top100Films=["1","5","8","78"]
     const flatProps = {
         options: top100Films.map((option) => option),
@@ -89,26 +94,29 @@ function Update() {
 
 <div style={{display: 'flex',justifyContent: 'center' }}>
 
-<DatePicker 
-style={{ width:"150px",height:"50px"}}
-selected={startDate}
- onChange={(date) =>   
-setStartDate(date)}
-      onCalendarClose={handleCalendarClose}
-      onCalendarOpen={handleCalendarOpen}
- />  
+ <LocalizationProvider dateAdapter={AdapterDateFns}>
+       <DesktopDatePicker
+          label="DOB"
+          value={value}
+          minDate={new Date('2017-01-01')}
+          onChange={(newValue) => {
+            setValue(newValue);
+          }}
+          renderInput={(params) => <TextField {...params} />}
+        />
+        </LocalizationProvider>
 
-<FormControl>
-      <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
+  <FormControl>
+      <FormLabel sx={{p:3}}>Gender</FormLabel>
       <RadioGroup
         defaultValue="female"
         name="radio-buttons-group"
       >
         <FormControlLabel value="female" control={<Radio />} label="Female" />
-        <FormControlLabel value="male" control={<Radio />} label="Male" />
-        
+        <FormControlLabel value="male" control={<Radio />} label="Male" />      
       </RadioGroup>
     </FormControl>
+
 </div>
 
 </Box>
